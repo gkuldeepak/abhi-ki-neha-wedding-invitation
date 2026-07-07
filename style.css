@@ -13,97 +13,9 @@ body {
   padding: 0;
 }
 
-.hero::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url(img/bg-preview.jpg);
-  background-size: cover;
-  background-position: center;
-  z-index: -1;
-  filter: grayscale();
-}
-
-.hero {
-  position: relative;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.hero h1,
-.hero h4,
-.hero p {
-  color: white;
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.4);
-}
-
-.hero h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(2.8rem, 9vw, 5.5rem);
-  font-weight: 700;
-  letter-spacing: 0.04em;
-}
-
-.hero h4 {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(1rem, 3vw, 1.4rem);
-  font-weight: 400;
-  font-style: italic;
-  letter-spacing: 0.06em;
-}
-
-.hero p {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(0.95rem, 2.5vw, 1.2rem);
-  font-weight: 400;
-  letter-spacing: 0.08em;
-  color: #000;
-  text-shadow: none;
-}
-
-.hero a {
-  color: var(--pink);
-  background-color: white;
-  box-shadow: var(--shadow);
-  padding: 0.75rem 1.5rem;
-  font-size: clamp(1rem, 2.5vw, 1.2rem);
-}
-
-.hero a:hover {
-  background-color: var(--pink);
-  color: white;
-}
-
-.invite-seal {
-  display: inline-block;
-  animation: sealSpin 6s linear infinite, sealColorCycle 4s ease-in-out infinite;
-  transform-origin: center;
-  font-size: 1.1em;
-  vertical-align: middle;
-}
-
-@keyframes sealSpin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-
-@keyframes sealColorCycle {
-  0%   { color: #ff4da6; filter: drop-shadow(0 0 4px #ff4da6); }
-  25%  { color: #00f5ff; filter: drop-shadow(0 0 4px #00f5ff); }
-  50%  { color: #ffe600; filter: drop-shadow(0 0 4px #ffe600); }
-  75%  { color: #c87eff; filter: drop-shadow(0 0 4px #c87eff); }
-  100% { color: #ff4da6; filter: drop-shadow(0 0 4px #ff4da6); }
-}
-
-.mynavbar {
-  background-color: rgba(255, 255, 255, 0.3) !important;
-  backdrop-filter: blur(4px);
-}
+/* NOTE: hero, navbar chrome, audio-icon and the neon "seal" that used to
+   live here have moved to css/hero.css and css/ui.css as part of the
+   cinematic redesign. This file now owns the mid-page sections only. */
 
 /* Pink hamburger — always visible on any background */
 .mynavbar .navbar-toggler-icon {
@@ -111,19 +23,11 @@ body {
 }
 
 .mynavbar .navbar-brand {
-  font-family: "Sacramento", cursive;
   font-size: clamp(1.6rem, 5vw, 2.8rem);
   font-weight: bold;
-  color: var(--pink);
 }
 
-.mynavbar .nav-link {
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-size: clamp(0.85rem, 1.8vw, 1rem);
-  padding: 0.5rem 0.8rem;
-  color: #333;
-}
+/* .mynavbar .nav-link colors are defined in css/ui.css (dark-glass nav) */
 
 /* Offcanvas side drawer — lives outside the nav so iOS doesn't clip it */
 #offcanvasNavbar {
@@ -172,12 +76,11 @@ body {
 }
 
 .home {
-  background-image: url(img/bg.png);
+  background-image: url(assets/img/home-bg.webp);
   background-size: cover;
   min-height: 100vh;
-  padding-top: 10rem;
+  padding-top: 6rem;
   padding-bottom: 5rem;
-  margin-top: -6rem;
 }
 
 .home h2,
@@ -426,6 +329,11 @@ body {
   margin-bottom: 1rem;
 }
 
+/* Gifts sits on the dark body backdrop — keep its eyebrow & lead legible */
+.gifts { color: var(--ivory); }
+.gifts span { color: var(--gold-300); letter-spacing: 0.28em; }
+.gifts p { color: var(--ivory-dim); }
+
 .story p,
 .gallery p,
 .rsvp p,
@@ -618,42 +526,12 @@ footer li {
   margin: 0.5rem;
 }
 
-.audio-icon-wrapper {
-  width: 4rem;
-  height: 4rem;
-  font-size: 4rem;
-  position: fixed;
-  bottom: 1.5rem;
-  right: 1.5rem;
-  cursor: pointer;
-  color: white;
-  opacity: 0.5;
-  mix-blend-mode: difference;
-  animation: rotating 4s linear infinite;
-  transform-origin: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  line-height: 0;
-  padding: 0.5rem; /* Larger touch area */
-}
-
-@keyframes rotating {
-  from {
-    transform: rotate(0);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
+/* Audio control moved to css/ui.css (#audio-toggle glass pill). */
 
 /* Extra large (1440px and up) */
 @media (min-width: 1440px) {
   .home .couple img {
     max-width: 250px;
-  }
-  .hero h1 {
-    font-size: 7rem;
   }
 }
 
@@ -746,13 +624,6 @@ footer li {
   .timeline li .timeline-panel {
     width: 90%;
     padding: 1rem;
-  }
-  .audio-icon-wrapper {
-    width: 3rem;
-    height: 3rem;
-    font-size: 3rem;
-    bottom: 1rem;
-    right: 1rem;
   }
 }
 
