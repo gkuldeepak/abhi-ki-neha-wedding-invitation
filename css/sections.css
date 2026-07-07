@@ -213,6 +213,39 @@ body {
   box-shadow: var(--shadow-soft), 0 0 30px rgba(212, 175, 55, 0.12);
 }
 
+/* ---- Timeline on small screens: LEFT-aligned rail ------------------
+   The centered layout collides on phones (wide panels overlap the centre
+   node/line). Below 768px we move the line + nodes to the left and let
+   panels run full-width beside them. */
+@media (max-width: 768px) {
+  .timeline::before,
+  .timeline-progress { left: 27px; }
+
+  .timeline li { margin-bottom: 2rem; }
+
+  .timeline li .timeline-image {
+    left: 27px;
+    top: 0;
+    width: 54px;
+    height: 54px;
+    transform: translateX(-50%);
+  }
+  .timeline li .timeline-image i { font-size: 1.5rem; }
+  .timeline li.lit .timeline-image { transform: translateX(-50%) scale(1.08); }
+
+  .timeline li .timeline-panel,
+  .timeline li.timeline-inverted .timeline-panel {
+    float: none;
+    width: auto;
+    margin-left: 68px;
+    transform: none;
+    padding: 1.1rem 1.25rem;
+  }
+  /* the horizontal callout arrows pointed at the centre line — hide them */
+  .timeline li .timeline-panel::before,
+  .timeline li .timeline-panel::after { display: none; }
+}
+
 /* ---- GIFTS → aurora gradient mesh + glass list -------------------- */
 .gifts {
   position: relative;
