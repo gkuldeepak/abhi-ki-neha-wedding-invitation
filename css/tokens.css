@@ -1,0 +1,112 @@
+/* =============================================================
+   tokens.css — Design system for #AbhiKiNeha
+   One source of truth: color, type, space, motion, depth.
+   Theme: Indian luxury wedding × cinematic sci-fi (Interstellar/Dune warmth)
+   ============================================================= */
+
+:root {
+  /* ---- Core palette ------------------------------------------------ */
+  /* Deep "space" backdrops */
+  --space-900: #05060a;   /* near-black, the void */
+  --space-800: #0a0b12;
+  --space-700: #12131d;
+  --space-600: #1b1c29;
+
+  /* Gold — the luxury spine of the whole design */
+  --gold-050: #fbf3d9;
+  --gold-100: #f6d992;
+  --gold-300: #e5c66a;
+  --gold-500: #d4af37;    /* primary gold */
+  --gold-700: #b8860b;
+  --gold-glow: rgba(212, 175, 55, 0.55);
+
+  /* Ivory / cream — warm neutral for text on dark */
+  --ivory: #f7f1e6;
+  --ivory-dim: rgba(247, 241, 230, 0.72);
+
+  /* Romance — keep the wedding pink, refined */
+  --rose-500: #f14e95;    /* original brand pink, preserved */
+  --rose-300: #f39bc0;
+  --rose-glow: rgba(241, 78, 149, 0.45);
+
+  /* Nebula depth accents (used sparingly, never neon) */
+  --nebula-violet: #6b3fa0;
+  --nebula-teal: #1e6f7a;
+
+  /* ---- Semantic aliases ------------------------------------------- */
+  --bg: var(--space-900);
+  --fg: var(--ivory);
+  --accent: var(--gold-500);
+  --accent-soft: var(--gold-100);
+  --romance: var(--rose-500);
+
+  /* Glassmorphism surface */
+  --glass-bg: rgba(255, 255, 255, 0.06);
+  --glass-border: rgba(255, 255, 255, 0.14);
+  --glass-blur: 18px;
+
+  /* ---- Typography -------------------------------------------------- */
+  --font-script: "Sacramento", "Playfair Display", cursive;   /* names, brand */
+  --font-display: "Playfair Display", Georgia, serif;          /* headings */
+  --font-serif: "Cormorant Garamond", Georgia, serif;          /* elegant body */
+  --font-ui: "Work Sans", system-ui, -apple-system, sans-serif;/* labels, nav */
+
+  /* Fluid type scale (clamp: min, preferred, max) */
+  --fs-hero: clamp(3rem, 11vw, 7.5rem);
+  --fs-h2:   clamp(2.6rem, 7vw, 5rem);
+  --fs-h3:   clamp(1.3rem, 3.2vw, 1.9rem);
+  --fs-lead: clamp(1.05rem, 2.4vw, 1.35rem);
+  --fs-body: clamp(1rem, 2vw, 1.15rem);
+  --fs-eyebrow: clamp(0.72rem, 1.6vw, 0.85rem);
+
+  --tracking-wide: 0.14em;
+  --tracking-caps: 0.28em;
+
+  /* ---- Spacing rhythm (8px base) ---------------------------------- */
+  --sp-1: 0.5rem;
+  --sp-2: 1rem;
+  --sp-3: 1.5rem;
+  --sp-4: 2rem;
+  --sp-5: 3rem;
+  --sp-6: 4.5rem;
+  --sp-7: 7rem;
+  --section-pad: clamp(4.5rem, 12vh, 9rem);
+
+  /* ---- Motion ------------------------------------------------------ */
+  /* Cinematic easings — heavy, confident, Apple-like */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-cine: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --dur-fast: 0.35s;
+  --dur-med: 0.7s;
+  --dur-slow: 1.2s;
+  --dur-cine: 2s;
+
+  /* ---- Shadows & glows -------------------------------------------- */
+  --shadow-soft: 0 10px 40px rgba(0, 0, 0, 0.45);
+  --shadow-deep: 0 30px 80px rgba(0, 0, 0, 0.6);
+  --glow-gold: 0 0 24px var(--gold-glow);
+  --glow-rose: 0 0 24px var(--rose-glow);
+
+  /* ---- Z-index scale (single hierarchy, no magic numbers) --------- */
+  --z-bg: 0;
+  --z-content: 10;
+  --z-nav: 100;
+  --z-audio: 600;
+  --z-overlay: 9000;   /* gallery fullscreen */
+  --z-intro: 10000;    /* cinematic intro sits above everything */
+  --z-cursor: 10050;   /* custom cursor stays on top of EVERY layer */
+}
+
+/* Honor user's reduced-motion preference globally.
+   JS also reads this to disable WebGL loops & the intro. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0.01ms;
+    --dur-med: 0.01ms;
+    --dur-slow: 0.01ms;
+    --dur-cine: 0.01ms;
+  }
+}

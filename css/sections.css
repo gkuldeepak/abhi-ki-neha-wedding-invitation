@@ -1,0 +1,267 @@
+/* =============================================================
+   sections.css — Stage 2 repaint: unify every section into the
+   dark cinematic-luxury theme + per-section animated backgrounds.
+   Loaded AFTER style.css so it wins on conflicts.
+   ============================================================= */
+
+/* ---- Shared cosmic backdrop --------------------------------------- */
+body {
+  background:
+    radial-gradient(ellipse 100% 60% at 50% 0%, #17111f 0%, transparent 60%),
+    radial-gradient(ellipse 90% 60% at 50% 100%, #120d1a 0%, transparent 55%),
+    var(--space-900);
+}
+#space-field {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+}
+
+/* generic accent layer host */
+.fx-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ---- HOME → dark, warm, glass ------------------------------------- */
+.home {
+  position: relative;
+  background: linear-gradient(180deg, transparent 0%, rgba(20, 14, 28, 0.5) 40%, transparent 100%);
+  overflow: hidden;
+}
+/* faint venue texture, heavily dimmed, for depth */
+.home::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url(assets/img/home-bg.webp);
+  background-size: cover;
+  background-position: center;
+  opacity: 0.06;
+  z-index: 0;
+  pointer-events: none;
+}
+.home .container { position: relative; z-index: 1; }
+
+.home h3 { color: var(--ivory); }
+.home p  { color: var(--ivory-dim); }
+.home .couple h3 { color: var(--gold-100); text-shadow: 0 0 22px var(--gold-glow); }
+.home .couple h4 { color: var(--gold-300); }
+.home .couple p  { color: var(--ivory-dim); }
+
+/* couple portraits: glass ring with gold glow + slow breathe */
+.home .couple .image-wrapper {
+  position: relative;
+  padding: 6px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glow-gold), var(--shadow-soft);
+  animation: breathe 10s var(--ease-cine) infinite;
+}
+.home .couple .image-wrapper::before {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  padding: 2px;
+  background: conic-gradient(from 0deg, var(--gold-500), var(--rose-300), var(--gold-100), var(--gold-500));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  animation: spinRing 14s linear infinite;
+}
+@keyframes spinRing { to { transform: rotate(360deg); } }
+
+/* central heart → glass medallion */
+.home .heart {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur));
+  box-shadow: var(--glow-rose);
+}
+.home .heart i { color: var(--rose-300); animation: softPulse 2.6s ease-in-out infinite; }
+
+/* floating diyas / golden bokeh */
+.diya {
+  position: absolute;
+  bottom: -8%;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff6e0 0%, var(--gold-100) 35%, rgba(246,217,146,0) 70%);
+  transform: scale(var(--s, 1));
+  opacity: 0;
+  animation-name: diyaRise;
+  animation-timing-function: ease-in;
+  animation-iteration-count: infinite;
+  filter: drop-shadow(0 0 8px var(--gold-glow));
+}
+@keyframes diyaRise {
+  0%   { transform: translateY(0) scale(var(--s,1)); opacity: 0; }
+  12%  { opacity: 0.9; }
+  85%  { opacity: 0.7; }
+  100% { transform: translateY(-88vh) scale(var(--s,1)); opacity: 0; }
+}
+
+/* ---- STORY → dark floral, drifting petals ------------------------- */
+.story {
+  position: relative;
+  background: linear-gradient(160deg, #150f1e 0%, #0c0a14 60%, #0a0810 100%);
+  color: var(--ivory);
+  border-radius: 0;
+  box-shadow: none;
+  overflow: hidden;
+}
+/* neutralize the old peachy floral blobs, add soft rose glows instead */
+.story::before, .story::after {
+  background: radial-gradient(circle, rgba(241, 78, 149, 0.12) 0%, transparent 70%);
+  width: 320px; height: 320px;
+}
+.story span { color: var(--gold-300); letter-spacing: 0.28em; }
+.story p { color: var(--ivory-dim); }
+
+.petal {
+  position: absolute;
+  top: -6%;
+  width: 14px; height: 14px;
+  background: linear-gradient(160deg, #fff, var(--rose-300));
+  border-radius: 0 100% 0 100%;
+  transform: scale(var(--s, 1)) rotate(0deg);
+  opacity: 0;
+  animation-name: petalFall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+@keyframes petalFall {
+  0%   { transform: translateY(0) rotate(0deg) scale(var(--s,1));   opacity: 0; }
+  10%  { opacity: 0.85; }
+  90%  { opacity: 0.6; }
+  100% { transform: translateY(105vh) rotate(540deg) scale(var(--s,1)); opacity: 0; }
+}
+
+/* ---- TIMELINE → glass panels, gold draw-line, igniting nodes ------ */
+.timeline::before { background-color: rgba(246, 217, 146, 0.12); }
+
+/* scrubbed gold progress line injected by scroll.js */
+.timeline-progress {
+  position: absolute;
+  top: 0; left: 50%;
+  width: 2px; height: 100%;
+  transform: translateX(-50%) scaleY(0);
+  transform-origin: top;
+  background: linear-gradient(var(--gold-100), var(--rose-300));
+  box-shadow: 0 0 12px var(--gold-glow);
+  z-index: 0;
+}
+
+.timeline li .timeline-panel {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  color: var(--ivory);
+  box-shadow: var(--shadow-soft);
+  transition: box-shadow var(--dur-med) var(--ease-out-expo), border-color var(--dur-med);
+}
+.timeline li .timeline-panel h3 { color: var(--gold-100); font-family: var(--font-display); }
+.timeline li .timeline-panel span { color: var(--gold-300); }
+.timeline li .timeline-body p { color: var(--ivory-dim); }
+/* keep the CSS callout arrows in sync with the glass panels */
+.timeline li .timeline-panel::before { border-left-color: var(--glass-border); }
+.timeline li.timeline-inverted .timeline-panel::before { border-right-color: var(--glass-border); }
+.timeline li .timeline-panel::after { border-left-color: rgba(20,16,28,0.85); }
+.timeline li.timeline-inverted .timeline-panel::after { border-right-color: rgba(20,16,28,0.85); }
+
+/* Node = opaque gold-glass medallion with a themed icon. Opaque fill +
+   high z-index means the center line can never read through it; the line
+   simply connects between medallions. */
+.timeline li .timeline-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 50% 32%, #2b2340 0%, #17121f 68%, #120d18 100%);
+  border: 2px solid rgba(246, 217, 146, 0.3);
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.55);
+  transition: box-shadow var(--dur-slow) var(--ease-out-expo), border-color var(--dur-slow),
+              transform var(--dur-slow) var(--ease-out-expo);
+  z-index: 5;               /* decisively above the base + progress lines */
+  overflow: hidden;
+}
+.timeline li .timeline-image i {
+  font-size: clamp(2.4rem, 5.5vw, 3.6rem);
+  line-height: 1;
+  background: linear-gradient(120deg, var(--gold-100), var(--gold-500));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  filter: drop-shadow(0 0 12px var(--gold-glow));
+}
+/* nodes ignite as they scroll into view (scroll.js adds .lit) */
+.timeline li.lit .timeline-image {
+  border-color: var(--gold-100);
+  box-shadow: 0 0 30px var(--gold-glow), 0 10px 34px rgba(0, 0, 0, 0.55);
+  transform: translateX(-50%) scale(1.05);
+}
+.timeline li.lit .timeline-image i { animation: softPulse 2.4s ease-in-out infinite; }
+.timeline li.lit .timeline-panel {
+  border-color: rgba(246, 217, 146, 0.35);
+  box-shadow: var(--shadow-soft), 0 0 30px rgba(212, 175, 55, 0.12);
+}
+
+/* ---- GIFTS → aurora gradient mesh + glass list -------------------- */
+.gifts {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(60% 50% at 20% 20%, rgba(107, 63, 160, 0.28) 0%, transparent 60%),
+    radial-gradient(50% 60% at 85% 30%, rgba(30, 111, 122, 0.24) 0%, transparent 60%),
+    radial-gradient(70% 60% at 50% 100%, rgba(212, 175, 55, 0.16) 0%, transparent 60%);
+  background-size: 200% 200%, 200% 200%, 200% 200%;
+  animation: auroraDrift 22s ease-in-out infinite alternate;
+}
+@keyframes auroraDrift {
+  0%   { background-position: 0% 0%,   100% 0%,  50% 100%; }
+  100% { background-position: 40% 30%, 60% 40%,  50% 60%; }
+}
+.gifts .list-group {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+}
+.gifts .list-group-item {
+  background: transparent;
+  color: var(--ivory);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+.gifts .list-group-item .fw-bold { color: var(--gold-100); letter-spacing: 0.06em; }
+.gifts .img-thumbnail {
+  background: #fff; border: 3px solid var(--gold-100);
+  box-shadow: var(--glow-gold);
+  display: block;
+  margin: 0.5rem auto 0;   /* center the block image (text-align can't) */
+}
+
+/* ---- INFO cards: warmer glass, gold headers ---------------------- */
+.info .card {
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: var(--shadow-soft);
+}
+.info .card-header { color: var(--gold-100); letter-spacing: 0.28em; }
+
+/* ---- reduced motion: silence the accents -------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .home .couple .image-wrapper,
+  .home .couple .image-wrapper::before,
+  .home .heart i,
+  .gifts { animation: none; }
+}

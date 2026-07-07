@@ -1,0 +1,124 @@
+/* =============================================================
+   transitions.css — between-section cinema + global focus/a11y chrome
+   • scroll progress bar (top)
+   • ornamental dividers that "draw" on scroll
+   • section-entrance light sweep (ScrollTrigger toggles .fx-in)
+   • focus-visible rings + skip link (accessibility pass)
+   ============================================================= */
+
+/* ---- Scroll progress bar ------------------------------------------ */
+#scroll-progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: left;
+  background: linear-gradient(90deg, var(--gold-100), var(--rose-300), var(--gold-500));
+  box-shadow: 0 0 12px var(--gold-glow);
+  z-index: var(--z-nav);
+  pointer-events: none;
+}
+
+/* ---- Ornamental section divider ----------------------------------- */
+/* A hairline that fans out from a glowing center gem. */
+.section-divider {
+  position: relative;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  overflow: hidden;
+}
+.section-divider::before,
+.section-divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 40%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-500));
+  transform: scaleX(0);
+  transition: transform 1.1s var(--ease-out-expo);
+}
+.section-divider::before { right: 50%; transform-origin: right; }
+.section-divider::after  { left: 50%;  transform-origin: left; background: linear-gradient(90deg, var(--gold-500), transparent); }
+.section-divider.fx-in::before,
+.section-divider.fx-in::after { transform: scaleX(1); }
+
+.section-divider .gem {
+  width: 12px; height: 12px;
+  background: linear-gradient(135deg, var(--gold-100), var(--gold-500));
+  transform: rotate(45deg) scale(0);
+  box-shadow: var(--glow-gold);
+  transition: transform 0.9s var(--ease-out-back) 0.2s;
+}
+.section-divider.fx-in .gem { transform: rotate(45deg) scale(1); }
+.section-divider .gem::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border: 1px solid var(--gold-glow);
+  transform: rotate(45deg);
+  opacity: 0;
+  animation: gemPulse 3s ease-in-out infinite;
+}
+@keyframes gemPulse {
+  0%, 100% { opacity: 0; transform: rotate(45deg) scale(1); }
+  50%      { opacity: 0.6; transform: rotate(45deg) scale(1.4); }
+}
+
+/* ---- Section-entrance light sweep --------------------------------- */
+/* A soft beam wipes across the top of a section as it scrolls in. */
+[data-section-fx] { position: relative; }
+[data-section-fx]::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 45%;
+  background: linear-gradient(180deg, rgba(246, 217, 146, 0.14), transparent);
+  opacity: 0;
+  transform: translateY(-30px);
+  transition: opacity 1.2s var(--ease-cine), transform 1.2s var(--ease-cine);
+  pointer-events: none;
+  z-index: 0;
+}
+[data-section-fx].fx-in::before { opacity: 1; transform: translateY(0); }
+
+/* ---- Accessibility: skip link ------------------------------------- */
+.skip-link {
+  position: absolute;
+  left: 0.75rem; top: -60px;
+  z-index: var(--z-intro);
+  padding: 0.6rem 1.1rem;
+  background: var(--gold-500);
+  color: var(--space-900);
+  border-radius: 0 0 8px 8px;
+  font-family: var(--font-ui);
+  font-weight: 600;
+  text-decoration: none;
+  transition: top 0.2s var(--ease-out-expo);
+}
+.skip-link:focus { top: 0; }
+
+/* ---- Accessibility: visible focus ring everywhere ----------------- */
+:focus-visible {
+  outline: 2px solid var(--gold-100);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+/* keep the ring readable on the gold buttons */
+.btn-lux:focus-visible,
+.intro__enter-btn:focus-visible { outline-color: var(--space-900); }
+
+@media (prefers-reduced-motion: reduce) {
+  .section-divider::before,
+  .section-divider::after,
+  .section-divider .gem { transition: none; transform: none; }
+  .section-divider.fx-in::before,
+  .section-divider.fx-in::after { transform: scaleX(1); }
+  .section-divider.fx-in .gem { transform: rotate(45deg) scale(1); }
+  .section-divider .gem::after { animation: none; }
+  [data-section-fx]::before { display: none; }
+}

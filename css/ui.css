@@ -1,0 +1,73 @@
+/* =============================================================
+   ui.css — cursor, audio toggle, navbar polish, misc chrome
+   ============================================================= */
+
+/* ---- Custom cursor (desktop / fine-pointer only) ------------------- */
+@media (hover: hover) and (pointer: fine) {
+  /* hide native cursor only once JS confirms it's running */
+  body.has-cursor, body.has-cursor a, body.has-cursor button { cursor: none; }
+
+  .cursor-dot, .cursor-ring {
+    position: fixed;
+    top: 0; left: 0;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: var(--z-cursor);
+    transform: translate3d(-50%, -50%, 0);
+    will-change: transform;
+  }
+  .cursor-dot {
+    width: 8px; height: 8px;
+    background: var(--gold-100);
+    box-shadow: 0 0 12px var(--gold-100), 0 0 4px #fff;
+  }
+  .cursor-ring {
+    width: 34px; height: 34px;
+    border: 1.5px solid var(--gold-300);
+    box-shadow: 0 0 10px var(--gold-glow), inset 0 0 6px var(--gold-glow);
+    transition: width .25s var(--ease-out-expo), height .25s var(--ease-out-expo),
+                border-color .25s, background .25s;
+  }
+  /* grows & glows over interactive elements */
+  body.cursor-hover .cursor-ring {
+    width: 56px; height: 56px;
+    border-color: var(--rose-300);
+    background: rgba(241, 78, 149, 0.08);
+  }
+}
+/* never show the custom cursor on touch */
+@media (pointer: coarse) { .cursor-dot, .cursor-ring { display: none; } }
+
+/* ---- Navbar: dark glass so it reads over the cinematic hero -------- */
+.mynavbar {
+  background: rgba(10, 11, 18, 0.35) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  z-index: var(--z-nav);
+}
+.mynavbar .navbar-brand {
+  font-family: var(--font-script);
+  color: var(--gold-100);
+  text-shadow: 0 0 18px var(--gold-glow);
+}
+.mynavbar .nav-link {
+  color: var(--ivory-dim);
+  position: relative;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: clamp(0.85rem, 1.8vw, 1rem);
+  padding: 0.5rem 0.8rem;
+}
+.mynavbar .nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0.8rem; right: 0.8rem; bottom: 0.35rem;
+  height: 1px;
+  background: linear-gradient(90deg, var(--gold-100), var(--rose-300));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-fast) var(--ease-out-expo);
+}
+.mynavbar .nav-link:hover { color: var(--gold-100); }
+.mynavbar .nav-link:hover::after { transform: scaleX(1); }

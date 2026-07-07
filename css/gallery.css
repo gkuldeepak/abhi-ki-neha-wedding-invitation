@@ -1,0 +1,93 @@
+/* =============================================================
+   gallery.css — 3D cover-flow (replaces the flat one-at-a-time fade)
+   All slides live in a shared perspective stage; JS positions each by
+   its distance from the current index. Center slide is clickable →
+   fullscreen. Whole stage tilts subtly toward the cursor.
+   ============================================================= */
+
+.gallery-slideshow {
+  max-width: min(94vw, 940px);
+  margin: 2.5rem auto 0;
+  perspective: 1700px;
+}
+
+.gallery-slide-wrapper {
+  position: relative;
+  height: clamp(240px, 46vw, 400px);
+  transform-style: preserve-3d;
+  overflow: visible;            /* let neighbours peek beyond the frame */
+  background: transparent;      /* was solid #111 */
+  box-shadow: none;
+  border-radius: 0;
+  display: block;               /* was flex */
+  cursor: default;
+  transition: transform 0.5s var(--ease-out-expo);
+  will-change: transform;
+}
+
+/* every slide is absolutely stacked in the 3D stage.
+   A 3:2 landscape frame + object-fit:contain shows the WHOLE photo (no
+   crop). The dark matte fills any letterbox gap (e.g. the one portrait
+   shot) so contained images read as framed prints. */
+.gallery-slide-img {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: min(72%, 560px);
+  height: auto;
+  aspect-ratio: 3 / 2;
+  object-fit: contain;
+  background: #0d0a14;
+  border-radius: 16px;
+  display: block !important;    /* override old display:none / .active */
+  margin: 0;
+  transform: translate(-50%, -50%);
+  transform-origin: center center;
+  transition: transform 0.75s var(--ease-out-expo),
+              opacity 0.6s var(--ease-out-expo),
+              filter 0.6s var(--ease-out-expo);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  will-change: transform, opacity;
+  animation: none;              /* kill old galleryFadeIn */
+}
+
+/* the center slide gets a gold rim + is the click target */
+.gallery-slide-img.is-center {
+  cursor: zoom-in;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6), 0 0 0 2px rgba(246, 217, 146, 0.5), var(--glow-gold);
+}
+/* side slides recede & desaturate slightly for depth */
+.gallery-slide-img.is-side { filter: brightness(0.72) saturate(0.9); }
+.gallery-slide-img.is-hidden { opacity: 0; pointer-events: none; }
+
+/* Kill the legacy `.active` fade from style.css — it set `transform: scale()`
+   which clobbered the centering translate and made slides dip down/up.
+   Needs .active specificity to beat the old rule. */
+.gallery-slide-img.active { animation: none; }
+
+/* first-paint: snap into place (JS removes .cf-init after 2 frames) */
+.gallery-slide-wrapper.cf-init .gallery-slide-img { transition: none !important; }
+
+.gallery-arrow {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(10px);
+  color: var(--gold-100);
+  z-index: 200;   /* above every slide (slides go up to z-index 100) */
+}
+.gallery-arrow:hover { background: var(--gold-500); color: var(--space-900); }
+.gallery-prev { left: 2%; }
+.gallery-next { right: 2%; }
+
+.gallery-dot { background: rgba(246, 217, 146, 0.3); }
+.gallery-dot.active { background: var(--gold-100); box-shadow: 0 0 10px var(--gold-glow); }
+/* dots are now <button>s — strip the default chrome */
+button.gallery-dot { border: none; padding: 0; }
+
+@media (max-width: 576px) {
+  .gallery-slide-img { width: 74%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gallery-slide-wrapper, .gallery-slide-img { transition: none; }
+}
