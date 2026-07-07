@@ -44,23 +44,25 @@ export function initAudio() {
     on = true;
     audio.muted = false;
     audio.volume = 0;
-    audio.play().then(() => fadeVol(0.5)).catch(() => { on = false; });
+    // If the track is already looping (muted autoplay), DON'T call play()
+    // again — a second play() interrupts the pending one and its rejection
+    // would leave us silent. Just unmute + fade. Only call play() if paused.
+    const started = audio.paused ? audio.play() : Promise.resolve();
+    started.then(() => fadeVol(0.5)).catch(() => { on = false; });
   };
 
   // Unmute on the first user interaction anywhere (Enter counts). One-shot.
   const evs = ["pointerdown", "keydown", "touchstart"];
   const kick = () => { unmute(); evs.forEach((ev) => document.removeEventListener(ev, kick)); };
-  const armGesture = () =>
-    evs.forEach((ev) => document.addEventListener(ev, kick, { passive: true }));
+  evs.forEach((ev) => document.addEventListener(ev, kick, { passive: true }));
 
-  // 1) Try to play WITH SOUND right at startup.
+  // 1) Try to play WITH SOUND right at startup (works on refresh / engaged).
   audio.muted = false;
   audio.play()
     .then(() => { on = true; fadeVol(0.5); })   // allowed → audible immediately
-    .catch(() => {                              // blocked → muted now, unmute on gesture
-      audio.muted = true;
-      audio.play().catch(() => {});
-      armGesture();
+    .catch(() => {                              // blocked (first visit) → muted now
+      audio.muted = true;                       // muted autoplay is always allowed
+      audio.play().catch(() => {});             // …the gesture handler unmutes it
     });
 
   // Exposed for the intro's Enter handler (explicit unmute).
