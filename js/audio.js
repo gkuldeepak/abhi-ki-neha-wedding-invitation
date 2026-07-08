@@ -1,13 +1,12 @@
 /* =============================================================
    audio.js — background soundtrack (no visible control)
 
-   Goal: play audibly the moment the page opens. Browsers permit that
-   only when the site already has autoplay privilege (e.g. on a refresh
-   after the visitor has engaged, or once a gesture happens). So:
-     1. try to play WITH SOUND immediately on load, and
-     2. if the browser blocks it, play muted right away and unmute on the
-        very first user interaction (a click, key, tap, or intro "Enter").
-   The track loops for the whole visit; there is no mute button.
+   Browsers forbid audible sound before any user interaction, but they
+   always allow MUTED playback. So the track starts muted on load (running
+   silently), and on the FIRST user gesture — a click, key, tap, or the
+   intro's "Enter" — we unmute AND call play() inside that gesture (Safari/
+   iOS require the play() call to happen in the gesture to unlock sound),
+   then fade the volume in. Loops for the whole visit; no mute button.
    ============================================================= */
 
 import { $ } from "./utils.js";
@@ -25,8 +24,10 @@ export function initAudio() {
 
   audio.src = TRACKS[Math.floor(Math.random() * TRACKS.length)];
   audio.loop = true;
+  audio.muted = true;
   audio.volume = 0;
-  let on = false;
+  let on = false;        // audible + confirmed playing
+  let arming = false;    // a play() attempt is in flight (prevents overlap)
 
   /** Fade the volume in (the track keeps looping underneath). */
   const fadeVol = (target, ms = 900) => {
@@ -39,32 +40,31 @@ export function initAudio() {
     requestAnimationFrame(tick);
   };
 
+  // Muted autoplay right away — always permitted — so the track is running.
+  audio.play().catch(() => {});
+
+  // capture-phase so a child's stopPropagation() can't hide the gesture
+  const evs = ["pointerdown", "keydown", "touchstart", "click"];
+  const opts = { capture: true, passive: true };
+  const cleanup = () => evs.forEach((ev) => document.removeEventListener(ev, kick, opts));
+
+  /** Go audible. MUST run inside a user gesture (Safari/iOS unlock rule).
+      `arming` blocks overlapping play() calls (which would abort each
+      other); `on`/cleanup happen only once playback truly succeeds. */
   const unmute = () => {
-    if (on) return;
-    on = true;
+    if (on || arming) return;
+    arming = true;
     audio.muted = false;
     audio.volume = 0;
-    // If the track is already looping (muted autoplay), DON'T call play()
-    // again — a second play() interrupts the pending one and its rejection
-    // would leave us silent. Just unmute + fade. Only call play() if paused.
-    const started = audio.paused ? audio.play() : Promise.resolve();
-    started.then(() => fadeVol(0.5)).catch(() => { on = false; });
+    audio.play()
+      .then(() => { on = true; arming = false; fadeVol(0.5); cleanup(); })
+      .catch(() => { arming = false; });
   };
 
-  // Unmute on the first user interaction anywhere (Enter counts). One-shot.
-  const evs = ["pointerdown", "keydown", "touchstart"];
-  const kick = () => { unmute(); evs.forEach((ev) => document.removeEventListener(ev, kick)); };
-  evs.forEach((ev) => document.addEventListener(ev, kick, { passive: true }));
+  // First interaction anywhere unlocks sound (the intro "Enter" is one).
+  function kick() { unmute(); }
+  evs.forEach((ev) => document.addEventListener(ev, kick, opts));
 
-  // 1) Try to play WITH SOUND right at startup (works on refresh / engaged).
-  audio.muted = false;
-  audio.play()
-    .then(() => { on = true; fadeVol(0.5); })   // allowed → audible immediately
-    .catch(() => {                              // blocked (first visit) → muted now
-      audio.muted = true;                       // muted autoplay is always allowed
-      audio.play().catch(() => {});             // …the gesture handler unmutes it
-    });
-
-  // Exposed for the intro's Enter handler (explicit unmute).
+  // Exposed for the intro's Enter handler (explicit unlock).
   return { start: unmute };
 }
