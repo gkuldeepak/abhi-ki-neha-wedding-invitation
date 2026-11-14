@@ -4,7 +4,9 @@
    ============================================================= */
 
 .simply-countdown {
+  --d: clamp(54px, 15.5vw, 108px); /* diamond size, fluid */
   overflow: visible;
+  width: 100%;
   display: flex;
   justify-content: center;
   flex-wrap: nowrap;
@@ -13,15 +15,17 @@
 }
 
 .simply-countdown > .simply-section {
-  width: 108px;
-  height: 108px;
-  padding: 0;
+  width: var(--d);
+  height: var(--d);
+  flex: 0 0 auto;
+  padding: 0 !important;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   float: none;
-  margin: 14px 20px;
+  margin: calc(var(--d) * 0.13) calc(var(--d) * 0.12);
   position: relative;
   /* glass diamond */
   background: linear-gradient(135deg, rgba(246, 217, 146, 0.16), rgba(212, 175, 55, 0.08));
@@ -53,7 +57,7 @@
 
 .simply-countdown > .simply-section .simply-amount {
   font-family: "Playfair Display", serif;
-  font-size: 1.7rem;
+  font-size: calc(var(--d) * 0.24);
   font-weight: 700;
   line-height: 1.1;
   color: #f7f1e6;
@@ -61,9 +65,9 @@
 }
 
 .simply-countdown > .simply-section .simply-word {
-  font-size: 0.58rem;
+  font-size: max(6px, calc(var(--d) * 0.085));
   text-transform: uppercase;
-  letter-spacing: 1.5px;
+  letter-spacing: 0.5px;
   margin-top: 3px;
   color: rgba(246, 217, 146, 0.85);
 }
