@@ -40,11 +40,21 @@ export function initAudio() {
     requestAnimationFrame(tick);
   };
 
-  // Muted autoplay right away — always permitted — so the track is running.
-  audio.play().catch(() => {});
+  // 1) Try AUDIBLE autoplay immediately. Allowed only where the browser
+  //    permits it (e.g. high site-engagement, or autoplay enabled).
+  // 2) If blocked, fall back to muted autoplay (always permitted) and unmute
+  //    on the first user gesture, as before.
+  audio.muted = false;
+  audio.volume = 0;
+  audio.play()
+    .then(() => { on = true; fadeVol(0.5); cleanup(); })
+    .catch(() => {
+      audio.muted = true;
+      audio.play().catch(() => {});
+    });
 
   // capture-phase so a child's stopPropagation() can't hide the gesture
-  const evs = ["pointerdown", "keydown", "touchstart", "click"];
+  const evs = ["pointerdown", "pointerup", "touchstart", "touchend", "keydown", "click"];
   const opts = { capture: true, passive: true };
   const cleanup = () => evs.forEach((ev) => document.removeEventListener(ev, kick, opts));
 
